@@ -30,5 +30,5 @@ WORKDIR /go/src/configs-server
 
 # 把/go/src/configs-server 整个文件夹的文件到当前工作目录
 COPY --from=0 /go/src/configs-server ./
-
+EXPOSE 8887
 ENTRYPOINT ./configs-server $0 $@
