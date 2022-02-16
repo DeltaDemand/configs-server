@@ -1,0 +1,10 @@
+{
+    "config_server":{
+        "server_name": "config-s01",
+        "listen_port": "8887"
+    },
+    "Etcd": {
+        "endPoints": ["112.74.60.132:2379"],
+        "dialTimeout": 5
+    }
+}

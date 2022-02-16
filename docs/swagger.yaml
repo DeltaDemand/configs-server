@@ -1,0 +1,141 @@
+info:
+  contact: {}
+  description: 通过更新etcd上的Agent配置修改管理对应Agent
+  title: Agent配置修改系统
+  version: "1.0"
+paths:
+  /:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+  /agent:
+    get:
+      parameters:
+      - description: 组名
+        in: query
+        name: group_name
+        required: true
+        type: string
+      - description: agent名
+        in: query
+        name: agent_name
+        required: true
+        type: string
+      - description: 配置名
+        in: query
+        name: config_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+    put:
+      parameters:
+      - description: 组名
+        in: query
+        name: group_name
+        required: true
+        type: string
+      - description: agent名
+        in: query
+        name: agent_name
+        required: true
+        type: string
+      - description: 配置名
+        in: query
+        name: config_name
+        required: true
+        type: string
+      - description: 配置值
+        in: query
+        name: value
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+  /group:
+    get:
+      parameters:
+      - description: 组名
+        in: query
+        name: group_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+    put:
+      parameters:
+      - description: 组名
+        in: query
+        name: group_name
+        required: true
+        type: string
+      - description: 配置名
+        in: query
+        name: config_name
+        required: true
+        type: string
+      - description: 配置值
+        in: query
+        name: value
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+  /struct:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求成功
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+swagger: "2.0"
