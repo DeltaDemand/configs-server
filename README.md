@@ -8,7 +8,7 @@ docker build -t config-server https://github.com/DeltaDemand/configs-server.git#
 ```
 ```bash
 #开放8887端口
-docker run -name config-s01 -p 8887:8887 -restart=always config-server -name=config-s01
+docker run --name=config-s01 -p 8887:8887 --restart=always -d config-server -name=config-s01
 ```
 
 ### 修改配置前端页面
