@@ -155,8 +155,8 @@ func (e *Server) EtcdPutAgent(c *gin.Context) {
 	defer cancel()
 	kvc := clientv3.NewKV(global.Cli)
 	groupName := c.Query("group_name")
-	configName := c.Query("config_name")
 	agentName := c.Query("agent_name")
+	configName := c.Query("config_name")
 	value := c.Query("value")
 
 	//对gent的configName配置项更新
@@ -165,6 +165,49 @@ func (e *Server) EtcdPutAgent(c *gin.Context) {
 		//更新成功 agent[configName]=value
 		global.Groups[groupName][agentName][configName] = value
 		c.String(200, "%s修改成功，%s改为:\n%v", agentName, configName, global.Groups[groupName][agentName][configName])
+	}
+}
+
+// swagger:operation Del
+// ---
+// summary: 删除Agent配置
+// summary: agent名为为空则删除整组
+// @Produce  json
+// @Param group_name query string true "组名"
+// @Param agent_name query string false "agent名"
+// @Success 200 {string} string "请求成功"
+// @Failure 400 {string} string "请求错误"
+// @Router /agent [delete]
+func (e *Server) EtcdDel(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), opTimeout)
+	defer cancel()
+	kvc := clientv3.NewKV(global.Cli)
+	groupName := c.Query("group_name")
+	agentName := c.Query("agent_name")
+
+	//用户不输入具体配置项，返回全部配置项
+	if agentName == "" {
+		if _, ok := global.Groups[groupName]; ok {
+			_, err := kvc.Delete(ctx, e.ServerName+global.Split+groupName+global.Split, clientv3.WithPrefix())
+			if err == nil {
+				//删除成功，也删除groups内的元素
+				delete(global.Groups, groupName)
+				c.String(200, "<%s>组删除成功\n", groupName)
+			}
+		} else {
+			c.String(200, "<%s>组不存在本系统，删除失败\n", groupName)
+		}
+	} else {
+		if _, ok := global.Groups[groupName][agentName]; ok {
+			_, err := kvc.Delete(ctx, e.ServerName+global.Split+groupName+global.Split+agentName+global.Split, clientv3.WithPrefix())
+			if err == nil {
+				//删除成功，也删除groups内的元素
+				delete(global.Groups[groupName], agentName)
+				c.String(200, "<%s>Agent配置删除成功\n", agentName)
+			}
+		} else {
+			c.String(200, "<%s>Agent不存在本系统，删除失败\n", groupName)
+		}
 	}
 }
 

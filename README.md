@@ -2,14 +2,11 @@
 > refresh agents' configs in real time
 
 拉取configs-server
-```bash
-git clone https://github.com/DeltaDemand/configs-server.git
-```
-docker化configs-server
-```bash
-cd configs-server/
 
-docker build -t config-server .
+```bash
+docker build -t config-server https://github.com/DeltaDemand/configs-server.git#main
+```
+```bash
 #开放8887端口
 docker run -name config-s01 -p 8887:8887 -restart=always config-server -name=config-s01
 ```

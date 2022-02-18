@@ -31,6 +31,7 @@ func main() {
 	router.PUT("/group", ConfigSvc.EtcdPutGroup)
 	router.GET("/agent", ConfigSvc.EtcdGetAgent)
 	router.PUT("/agent", ConfigSvc.EtcdPutAgent)
+	router.DELETE("/agent", ConfigSvc.EtcdDel)
 
 	router.Run(":" + ConfigSvc.ListenPort)
 
