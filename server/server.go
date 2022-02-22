@@ -36,6 +36,7 @@ func (e *Server) EtcdGetAll(c *gin.Context) {
 	if len(response.Kvs) == 0 {
 		log.Printf("etcd not found")
 	}
+	global.Groups = make(map[string]model.Group, 3)
 	//把所有的配置解析，存入global.Groups中
 	for _, kv := range response.Kvs {
 		parseKV(kv.Key, kv.Value)
