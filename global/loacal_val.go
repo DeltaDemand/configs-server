@@ -8,7 +8,7 @@ import (
 
 var (
 	Groups map[string]model.Group //该配置有多少组要管理
-	Split  = "(]"
+	Split  = "/"
 	Cli    *clientv3.Client //etcd客户端
 )
 

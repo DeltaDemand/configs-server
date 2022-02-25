@@ -29,7 +29,7 @@ func (e *Server) EtcdGetAll(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), opTimeout)
 	defer cancel()
 	kvc := clientv3.NewKV(global.Cli)
-	response, err := kvc.Get(ctx, e.ServerName, clientv3.WithPrefix())
+	response, err := kvc.Get(ctx, global.Split+e.ServerName, clientv3.WithPrefix())
 	if err != nil {
 		log.Println(err)
 	}
@@ -59,7 +59,7 @@ func (e *Server) EtcdGetGroup(c *gin.Context) {
 	kvc := clientv3.NewKV(global.Cli)
 	groupName := c.Query("group_name")
 
-	response, err := kvc.Get(ctx, e.ServerName+global.Split+groupName, clientv3.WithPrefix())
+	response, err := kvc.Get(ctx, global.Split+e.ServerName+global.Split+groupName, clientv3.WithPrefix())
 	if err != nil {
 		log.Println(err)
 	}
@@ -94,7 +94,7 @@ func (e *Server) EtcdPutGroup(c *gin.Context) {
 	group := global.Groups[groupName]
 	for agentName, agent := range group {
 		//对组内每个Agent的configName配置项更新
-		_, err := kvc.Put(ctx, e.ServerName+global.Split+groupName+global.Split+agentName+global.Split+configName, value)
+		_, err := kvc.Put(ctx, global.Split+e.ServerName+global.Split+groupName+global.Split+agentName+global.Split+configName, value)
 		if err == nil {
 			//更新etcd成功，也更新global.Groups的数据
 			agent[configName] = value
@@ -120,7 +120,7 @@ func (e *Server) EtcdGetAgent(c *gin.Context) {
 	groupName := c.Query("group_name")
 	agentName := c.Query("agent_name")
 	configName := c.Query("config_name")
-	key := e.ServerName + global.Split + groupName + global.Split + agentName
+	key := global.Split + e.ServerName + global.Split + groupName + global.Split + agentName
 	response, err := kvc.Get(ctx, key, clientv3.WithPrefix())
 	if err != nil {
 		log.Println(err)
@@ -161,7 +161,7 @@ func (e *Server) EtcdPutAgent(c *gin.Context) {
 	value := c.Query("value")
 
 	//对gent的configName配置项更新
-	_, err := kvc.Put(ctx, e.ServerName+global.Split+groupName+global.Split+agentName+global.Split+configName, value)
+	_, err := kvc.Put(ctx, global.Split+e.ServerName+global.Split+groupName+global.Split+agentName+global.Split+configName, value)
 	if err == nil {
 		//更新成功 agent[configName]=value
 		global.Groups[groupName][agentName][configName] = value
@@ -189,7 +189,7 @@ func (e *Server) EtcdDel(c *gin.Context) {
 	//用户不输入具体配置项，返回全部配置项
 	if agentName == "" {
 		if _, ok := global.Groups[groupName]; ok {
-			_, err := kvc.Delete(ctx, e.ServerName+global.Split+groupName+global.Split, clientv3.WithPrefix())
+			_, err := kvc.Delete(ctx, global.Split+e.ServerName+global.Split+groupName+global.Split, clientv3.WithPrefix())
 			if err == nil {
 				//删除成功，也删除groups内的元素
 				delete(global.Groups, groupName)
@@ -200,7 +200,7 @@ func (e *Server) EtcdDel(c *gin.Context) {
 		}
 	} else {
 		if _, ok := global.Groups[groupName][agentName]; ok {
-			_, err := kvc.Delete(ctx, e.ServerName+global.Split+groupName+global.Split+agentName+global.Split, clientv3.WithPrefix())
+			_, err := kvc.Delete(ctx, global.Split+e.ServerName+global.Split+groupName+global.Split+agentName+global.Split, clientv3.WithPrefix())
 			if err == nil {
 				//删除成功，也删除groups内的元素
 				delete(global.Groups[groupName], agentName)
@@ -218,9 +218,9 @@ func parseKV(k []byte, v []byte) {
 	//大于三层的才要
 	if len(keySli) > 3 {
 		//keySli[0]是服务名，忽略
-		groupName := keySli[1]
-		agentName := keySli[2]
-		configName := keySli[3]
+		groupName := keySli[2]
+		agentName := keySli[3]
+		configName := keySli[4]
 		//该组不存在，创建
 		if _, ok := global.Groups[groupName]; !ok {
 			newGroup := make(map[string]model.ConfigItems, 3)
