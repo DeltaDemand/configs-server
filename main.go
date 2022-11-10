@@ -26,7 +26,7 @@ func main() {
 	// swagger接口文档：localhost:8887/swagger/index.html
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/", ConfigSvc.EtcdGetAll)
-	router.GET("/struct", global.DisplayGroups)
+	router.GET("/struct", ConfigSvc.EtcdGetAll, global.DisplayGroups)
 	router.GET("/group", ConfigSvc.EtcdGetGroup)
 	router.PUT("/group", ConfigSvc.EtcdPutGroup)
 	router.GET("/agent", ConfigSvc.EtcdGetAgent)
